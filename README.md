@@ -1,4 +1,6 @@
 # Project on Orbital effect of magnetic field for Majorana phase diagram
+Launch repository Binder:
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/basnijholt/orbitalfield)
 
 By Bas Nijholt and Anton Akhmerov
 
