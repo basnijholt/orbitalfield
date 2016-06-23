@@ -2,13 +2,15 @@
 Launch repository Binder (unfortunately Binder doesn't allow for starting `ipyparallel` engines, so only the plotting of the figures will work properly):
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/basnijholt/orbitalfield)
 
+See the "Orbital effect of magnetic field on the Majorana phase diagram" paper on [Arxiv](http://arxiv.org/abs/1509.02675).
+
 By Bas Nijholt and Anton Akhmerov
 
 
 This folder contains three IPython notebooks:
-* Phase-diagrams.ipynb
-* Induced-gap-tuning.ipynb
-* Paper-figures.ipynb
+* [Phase-diagrams.ipynb](https://github.com/basnijholt/orbitalfield/blob/master/Phase-diagrams.ipynb)
+* [Induced-gap-tuning.ipynb](https://github.com/basnijholt/orbitalfield/blob/master/Induced-gap-tuning.ipynb)
+* [Paper-figures.ipynb](https://github.com/basnijholt/orbitalfield/blob/master/Paper-figures.ipynb)
 
 All notebooks contain instructions of how it can be used.
 
