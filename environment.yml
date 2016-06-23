@@ -8,3 +8,4 @@ dependencies:
   - kwant
   - holoviews
   - discretizer
+  - h5py
