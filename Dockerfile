@@ -1,6 +1,6 @@
 FROM andrewosh/binder-base
 MAINTAINER Bas Nijholt <basnijholt@gmail.com>
-RUN source activate python3
+RUN /bin/bash -c "source activate python3"
 RUN conda install -y -c https://conda.anaconda.org/basnijholt kwant==1.2.2
 RUN conda install -y -c https://conda.anaconda.org/basnijholt discretizer==0.2
 RUN conda install -y holoviews==1.5.0
