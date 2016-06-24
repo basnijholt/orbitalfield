@@ -29,7 +29,7 @@ If all package dependencies are met, the notebooks will work in Python 2 without
 issues. In case it might not work we've created a Docker image that will create
 an environment where everything will work.
 
-First install Docker, see [instructions](https://docs.docker.com/installation/)
+First install Docker, see [instructions](https://docs.docker.com/installation/).
 
 You can either build the image yourself or use a precompiled image.
 
@@ -38,7 +38,7 @@ To download and run just execute:
 $ docker run -p 8888:8888 -v /path/to/downloaded/folder/:/home/jovyan/work/ basnijholt/kwant:orbitaleffect
 ```
 
-OR build yourself (will take ~20 min to build):
+or build the Docker image yourself, you should use `Dockerfile-notebook` (`Dockerfile` is for Binder) (will take ~20 min to build):
 ```
 $ docker build --tag="basnijholt/kwant:orbitaleffect" /path/to/downloaded/folder/
 ```
