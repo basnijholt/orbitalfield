@@ -1,5 +1,5 @@
 # Project on Orbital effect of magnetic field for Majorana phase diagram
-Launch repository Binder (unfortunately Binder doesn't allow for starting `ipyparallel` engines, so only the plotting of the figures in `Paper-figures.ipynb` will work properly):
+Launch repository Binder (start an `ipcluster` in the IPython Clusters tab):
 [![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/basnijholt/orbitalfield)
 
 See the "Orbital effect of magnetic field on the Majorana phase diagram" paper on [arXiv:1509.02675](http://arxiv.org/abs/1509.02675) [[pdf](http://arxiv.org/pdf/1509.02675)], [Phys. Rev. B 93, 235434 (2016)](http://dx.doi.org/10.1103/PhysRevB.93.235434).
