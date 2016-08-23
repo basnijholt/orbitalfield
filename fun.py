@@ -150,7 +150,7 @@ def make_3d_wire(a=10, R=50, L=None, holes=True, verbose=False):
 
     Returns:
     --------
-    sys : kwant.builder.(In)finiteSystem object
+    syst : kwant.builder.(In)finiteSystem object
         The finalized (in)finite system.
     """
     k_x, k_y, k_z = momentum_operators
@@ -168,7 +168,7 @@ def make_3d_wire(a=10, R=50, L=None, holes=True, verbose=False):
 
     tb = Discretizer(hamiltonian, space_dependent={'V'}, lattice_constant=a,
                      verbose=verbose)
-    sys = kwant.Builder(kwant.TranslationalSymmetry((-a, 0, 0)))
+    syst = kwant.Builder(kwant.TranslationalSymmetry((-a, 0, 0)))
 
     if L is None:
         L = 1
@@ -179,7 +179,7 @@ def make_3d_wire(a=10, R=50, L=None, holes=True, verbose=False):
                 (z - R) and y < 2 * (z + R) and y > -2 *
                 (z + R) and x >= 0 and x < L)
 
-    sys[tb.lattice.shape(hexagon, (0, 0, 0))] = tb.onsite
+    syst[tb.lattice.shape(hexagon, (0, 0, 0))] = tb.onsite
 
     def peierls(val, ind):
         def phase(s1, s2, p):
@@ -205,8 +205,8 @@ def make_3d_wire(a=10, R=50, L=None, holes=True, verbose=False):
 
     for hop, val in tb.hoppings.items():
         ind = np.argmax(hop.delta)
-        sys[hop] = peierls(val, ind)
-    return sys.finalized()
+        syst[hop] = peierls(val, ind)
+    return syst.finalized()
 
 
 
@@ -231,7 +231,7 @@ def make_3d_wire_external_sc(a=10, r1=50, r2=70, phi=135, angle=45, finalized=Tr
 
     Returns:
     --------
-    sys : kwant.builder.InfiniteSystem object
+    syst : kwant.builder.InfiniteSystem object
         The finalized infinite system.
     """
     k_x, k_y, k_z = momentum_operators
@@ -262,14 +262,14 @@ def make_3d_wire_external_sc(a=10, r1=50, r2=70, phi=135, angle=45, finalized=Tr
     tb_sc = Discretizer(hamiltonian, **args)
     tb_interface = Discretizer(hamiltonian.subs(t, t_interface), **args)
     lat = tb_normal.lattice
-    sys = kwant.Builder(kwant.TranslationalSymmetry((-a, 0, 0)))
+    syst = kwant.Builder(kwant.TranslationalSymmetry((-a, 0, 0)))
 
     shape_normal = cylinder_sector(r1=r1, angle=angle)
     shape_sc = cylinder_sector(r1=r2, r2=r1, phi=phi, angle=angle)
 
-    sys[lat.shape(*shape_normal)] = tb_normal.onsite
-    sys[lat.shape(*shape_sc)] = tb_sc.onsite
-    sc_sites = list(sys.expand(lat.shape(*shape_sc)))
+    syst[lat.shape(*shape_normal)] = tb_normal.onsite
+    syst[lat.shape(*shape_sc)] = tb_sc.onsite
+    sc_sites = list(syst.expand(lat.shape(*shape_sc)))
 
     def peierls(val, ind):
         def phase(s1, s2, p):
@@ -289,23 +289,46 @@ def make_3d_wire_external_sc(a=10, r1=50, r2=70, phi=135, angle=45, finalized=Tr
                 return val(s1, s2, p)
         return with_phase
 
-    for hop, val in tb_sc.hoppings.items():
-        ind = np.argmax(hop.delta)
-        sys[hop] = peierls(val, ind)
 
-    def at_interface(site1, site2):
-        return ((shape_sc[0](site1.pos) and shape_normal[0](site2.pos)) or
-                (shape_normal[0](site1.pos) and shape_sc[0](site2.pos)))
+    def hoppingkind_in_shape(hop, shape, syst):
+        """Returns an HoppingKind iterator for hoppings in shape."""
+        def in_shape(site1, site2, shape):
+            return shape[0](site1.pos) and shape[0](site2.pos)
+        hoppingkind = kwant.HoppingKind(hop.delta, hop.family_a)(syst)
+        return ((i, j) for (i, j) in hoppingkind if in_shape(i, j, shape))
 
-    # Hoppings at the barrier between wire and superconductor
-    for hop, val in tb_interface.hoppings.items():
-        hopping_iterator = ((i, j) for (i, j) in kwant.builder.HoppingKind(hop.delta, lat)(sys) if at_interface(i, j))
-        ind = np.argmax(hop.delta)
-        sys[hopping_iterator] = peierls(val, ind)
+
+    def hoppingkind_at_interface(hop, shape1, shape2, syst):
+        """Returns an HoppingKind iterator for hoppings at an interface between
+           shape1 and shape2."""
+        def at_interface(site1, site2, shape1, shape2):
+            return ((shape1[0](site1.pos) and shape2[0](site2.pos)) or 
+                    (shape2[0](site1.pos) and shape1[0](site2.pos)))
+        hoppingkind = kwant.HoppingKind(hop.delta, hop.family_a)(syst)
+        return ((i, j) for (i, j) in hoppingkind if at_interface(i, j, shape1, shape2))
+
+
+    for hop, func in tb_normal.hoppings.items():
+        # Add hoppings in normal parts of wire and lead with Peierls substitution
+        ind = np.argmax(hop.delta) # Index of direction of hopping
+        syst[hoppingkind_in_shape(hop, shape_normal, syst)] = peierls(func, ind, a)
+
+        
+    for hop, func in tb_sc.hoppings.items():
+        # Add hoppings in superconducting parts of wire and lead  with Peierls substitution
+        ind = np.argmax(hop.delta) # Index of direction of hopping
+        syst[hoppingkind_in_shape(hop, shape_sc, syst)] = peierls(func, ind, a)
+
+
+    for hop, func in tb_interface.hoppings.items():
+        # Add hoppings at the interface of superconducting parts and normal parts of wire and lead
+        syst[hoppingkind_at_interface(hop, shape_sc, shape_normal, syst)] = func
+
+    
     if finalized:
-        return sys.finalized()
+        return syst.finalized()
     else:
-        return sys
+        return syst
 
 
 # Phase diagram
@@ -374,9 +397,9 @@ def find_gap(lead, p, val, tol=1e-3):
         energy : float
             Energy at which this function checks for propagating modes.
         h0 : numpy array
-            Onsite Hamiltonian, sys.cell_hamiltonian(args=[p])
+            Onsite Hamiltonian, syst.cell_hamiltonian(args=[p])
         t0 : numpy array
-            Hopping matrix, sys.inter_cell_hopping(args=[p])
+            Hopping matrix, syst.inter_cell_hopping(args=[p])
 
         Returns:
         --------
