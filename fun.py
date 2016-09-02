@@ -271,7 +271,7 @@ def make_3d_wire_external_sc(a=10, r1=50, r2=70, phi=135, angle=45, finalized=Tr
     syst[lat.shape(*shape_sc)] = tb_sc.onsite
     sc_sites = list(syst.expand(lat.shape(*shape_sc)))
 
-    def peierls(val, ind):
+    def peierls(val, ind, a):
         def phase(s1, s2, p):
             x, y, z = s1.pos
             A = lambda p, x, y, z: [p.B_y * z - p.B_z * y, 0, p.B_x * y]
@@ -315,7 +315,7 @@ def make_3d_wire_external_sc(a=10, r1=50, r2=70, phi=135, angle=45, finalized=Tr
 
         
     for hop, func in tb_sc.hoppings.items():
-        # Add hoppings in superconducting parts of wire and lead  with Peierls substitution
+        # Add hoppings in superconducting parts of wire and lead with Peierls substitution
         ind = np.argmax(hop.delta) # Index of direction of hopping
         syst[hoppingkind_in_shape(hop, shape_sc, syst)] = peierls(func, ind, a)
 
@@ -820,3 +820,4 @@ def modes(h_cell, h_hop, tol=1e6):
     ev = kwant.physics.leads.unified_eigenproblem(*(matrices + (tol,)))[0]
 
     return ev
+    
