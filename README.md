@@ -25,7 +25,7 @@ Find the correct value for $\Delta$ to set the required $\Delta_\textrm{ind}$.
 
 
 # Installation
-If all package dependencies are met, the notebooks will work in Python 2 without
+If all package dependencies are met, the notebooks will work in Python 3 without
 issues. In case it might not work we've created a Docker image that will create
 an environment where everything will work.
 
