@@ -16,4 +16,6 @@ RUN conda install -y -n python3 \
   'holoviews==1.5.0' \
   'ipyparallel'
 
-COPY ipcluster_config.py /home/main/.ipython/profile_default/ipcluster_config.py
+RUN ipython profile create --parallel
+RUN ipcluster nbextension enable --user
+# COPY ipcluster_config.py /home/main/.ipython/profile_default/ipcluster_config.py
