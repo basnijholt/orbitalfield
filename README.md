@@ -1,6 +1,6 @@
 # Project on Orbital effect of magnetic field for Majorana phase diagram
 Launch repository Binder (start an `ipcluster` in the IPython Clusters tab):
-[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/basnijholt/orbitalfield)
+[![Binder](http://mybinder.org/badge.svg)](http://mybinder.org/repo/basnijholt/orbitalfield). Note that Binder has not enough computational power to evaluate the cells on the set resolution.
 
 See the "Orbital effect of magnetic field on the Majorana phase diagram" paper on [arXiv:1509.02675](http://arxiv.org/abs/1509.02675) [[pdf](http://arxiv.org/pdf/1509.02675)], [Phys. Rev. B 93, 235434 (2016)](http://dx.doi.org/10.1103/PhysRevB.93.235434).
 
